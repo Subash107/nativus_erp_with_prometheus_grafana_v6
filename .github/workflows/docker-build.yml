@@ -28,6 +28,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # 🔽 NEW STEP: make the owner name lowercase (subash107)
+      - name: Set lower-case owner
+        run: echo "OWNER_LC=${OWNER,,}" >> $GITHUB_ENV
+        env:
+          OWNER: ${{ github.repository_owner }}
+
       - name: Build & Push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -35,8 +41,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/nativus-erp-v6:latest
-            ghcr.io/${{ github.repository_owner }}/nativus-erp-v6:${{ github.run_number }}
+            ghcr.io/${{ env.OWNER_LC }}/nativus-erp-v6:latest
+            ghcr.io/${{ env.OWNER_LC }}/nativus-erp-v6:${{ github.run_number }}
 
       - name: Image Build Complete
         run: echo "Docker image built and pushed successfully!"
