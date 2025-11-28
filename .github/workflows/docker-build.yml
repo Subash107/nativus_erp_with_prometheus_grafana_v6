@@ -1,60 +1,31 @@
-name: Build & Publish ERP Docker Image
+name: ci
 
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - "main"
 
 jobs:
-  build-and-push:
+  docker:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # ---------- GHCR LOGIN (optional, keep if you still want GHCR) ----------
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set lower-case owner for GHCR
-        run: echo "OWNER_LC=${OWNER,,}" >> $GITHUB_ENV
-        env:
-          OWNER: ${{ github.repository_owner }}
-
-      # ---------- DOCKER HUB LOGIN ----------
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # ---------- BUILD & PUSH TO BOTH REGISTRIES ----------
-      - name: Build & Push Docker image
-        uses: docker/build-push-action@v5
+          username: ${{ vars.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PAT }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
         with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: |
-            # GHCR tags (optional)
-            ghcr.io/${{ env.OWNER_LC }}/nativus-erp-v6:latest
-            ghcr.io/${{ env.OWNER_LC }}/nativus-erp-v6:${{ github.run_number }}
-            # Docker Hub tags
-            ${{ secrets.DOCKERHUB_USERNAME }}/nativus-erp-v6:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/nativus-erp-v6:${{ github.run_number }}
-
-      - name: Image Build Complete
-        run: echo "Docker image built and pushed to GHCR + Docker Hub!"
+          driver: cloud
+          endpoint: "lama202/test"
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          tags: "${{ vars.DOCKER_USER }}/docker-build-cloud-demo:latest"
+          # For pull requests, export results to the build cache.
+          # Otherwise, push to a registry.
+          outputs: ${{ github.event_name == 'pull_request' && 'type=cacheonly' || 'type=registry' }}
+  
