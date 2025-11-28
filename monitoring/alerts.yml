@@ -1,0 +1,29 @@
+groups:
+  - name: nativus-erp-alerts
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} is down"
+          description: "The target {{ $labels.job }} at {{ $labels.instance }} has been unreachable for more than 1 minute."
+
+      - alert: HighContainerCPU
+        expr: sum by (instance) (rate(container_cpu_usage_seconds_total[5m])) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High container CPU usage on {{ $labels.instance }}"
+          description: "Container CPU usage is above 80% for 5 minutes."
+
+      - alert: NoNewOrdersLastHour
+        expr: increase(nativus_erp_orders_total[1h]) == 0
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "No new ERP orders for the last hour"
+          description: "The ERP has not processed any new orders in the last hour. This may be normal during low-traffic periods, but could also indicate an issue."

@@ -1,0 +1,23 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: "default-receiver"
+
+receivers:
+  - name: "default-receiver"
+    # Example: enable email notifications by filling your SMTP + email details
+    # email_configs:
+    #   - to: "you@example.com"
+    #     from: "alertmanager@example.com"
+    #     smarthost: "smtp.example.com:587"
+    #     auth_username: "smtp-user"
+    #     auth_password: "smtp-password"
+    #
+    # Example: enable Telegram notifications (requires valid bot + chat id)
+    # telegram_configs:
+    #   - bot_token: "YOUR_TELEGRAM_BOT_TOKEN"
+    #     chat_id: "YOUR_TELEGRAM_CHAT_ID"
+    #     message: "{{ template \"telegram.default\" . }}"
+
+templates: []

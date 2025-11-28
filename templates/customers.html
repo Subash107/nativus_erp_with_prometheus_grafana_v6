@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Customers</h1>
+
+<section class="two-cols">
+    <div class="panel">
+        <h2>Add / Update Customer</h2>
+        <form method="post" class="simple-form">
+            <label>Name
+                <input type="text" name="name" required>
+            </label>
+            <label>Email
+                <input type="email" name="email">
+            </label>
+            <label>Phone
+                <input type="text" name="phone">
+            </label>
+            <label>City
+                <input type="text" name="city">
+            </label>
+            <label>Country
+                <input type="text" name="country">
+            </label>
+            <label>Shopify Customer ID
+                <input type="text" name="shopify_customer_id" placeholder="ID from Shopify (optional)">
+            </label>
+            <label>Note
+                <input type="text" name="note">
+            </label>
+            <button type="submit">Save Customer</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h2>List</h2>
+            <form method="get" class="filters-row">
+                <input type="date" name="start_date" value="{{ start_date }}">
+                <span>to</span>
+                <input type="date" name="end_date" value="{{ end_date }}">
+                <input type="text" name="search" value="{{ search }}" placeholder="Search name / email / phone">
+                <button type="submit">Filter</button>
+                <a class="link-button" href="{{ url_for('export_customers', start_date=start_date, end_date=end_date) }}">Export</a>
+            </form>
+        </div>
+
+        <table class="plain-table">
+            <thead>
+                <tr>
+                    <th>Date</th><th>Name</th><th>Email</th><th>Phone</th><th>City</th><th>Country</th><th>Shopify ID</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for c in customers %}
+                <tr>
+                    <td>{{ c.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ c.name }}</td>
+                    <td>{{ c.email }}</td>
+                    <td>{{ c.phone }}</td>
+                    <td>{{ c.city }}</td>
+                    <td>{{ c.country }}</td>
+                    <td>{{ c.shopify_customer_id }}</td>
+                    <td><a href="{{ url_for('delete_customer', customer_id=c.id) }}" onclick="return confirm('Delete this customer?')">Delete</a></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="8">No customers yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

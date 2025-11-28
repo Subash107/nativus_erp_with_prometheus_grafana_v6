@@ -1,0 +1,9 @@
+apiVersion: 1
+
+providers:
+  - name: "Nativus ERP Dashboards"
+    orgId: 1
+    folder: "Nativus ERP"
+    type: file
+    options:
+      path: /etc/grafana/provisioning/dashboards

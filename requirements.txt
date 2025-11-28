@@ -1,0 +1,8 @@
+flask
+flask_sqlalchemy
+pandas
+xlsxwriter
+openpyxl
+gunicorn
+werkzeug
+prometheus_client

@@ -1,0 +1,99 @@
+{
+  "id": null,
+  "uid": "nativus-erp",
+  "title": "Nativus ERP Overview",
+  "timezone": "browser",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "10s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Total Orders",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "nativus_erp_orders_total",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Total Customers",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "nativus_erp_customers_total",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      }
+    },
+    {
+      "id": 3,
+      "type": "graph",
+      "title": "Income vs Expense",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "nativus_erp_income_total",
+          "refId": "A",
+          "legendFormat": "Income"
+        },
+        {
+          "expr": "nativus_erp_expense_total",
+          "refId": "B",
+          "legendFormat": "Expense"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      }
+    },
+    {
+      "id": 4,
+      "type": "graph",
+      "title": "Request Rate",
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "sum(rate(nativus_erp_request_total[5m])) by (endpoint)",
+          "refId": "A",
+          "legendFormat": "{{endpoint}}"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      }
+    }
+  ]
+}

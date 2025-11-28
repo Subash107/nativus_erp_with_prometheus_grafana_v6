@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Tasks</h1>
+
+<section class="two-cols">
+    <div class="panel">
+        <h2>Add Task</h2>
+        <form method="post" class="simple-form">
+            <label>Date
+                <input type="date" name="date">
+            </label>
+            <label>Title
+                <input type="text" name="title" required>
+            </label>
+            <label>Related Customer
+                <select name="customer_id">
+                    <option value="">-- None --</option>
+                    {% for c in customers %}
+                        <option value="{{ c.id }}">{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Status
+                <select name="status">
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                </select>
+            </label>
+            <label>Priority
+                <select name="priority">
+                    <option value="">--</option>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+            </label>
+            <label>Note
+                <input type="text" name="note">
+            </label>
+            <button type="submit">Save Task</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header">
+            <h2>List</h2>
+            <form method="get" class="filters-row">
+                <input type="date" name="start_date" value="{{ start_date }}">
+                <span>to</span>
+                <input type="date" name="end_date" value="{{ end_date }}">
+                <select name="status_filter">
+                    <option value="all" {% if status_filter=='all' %}selected{% endif %}>All</option>
+                    <option value="Pending" {% if status_filter=='Pending' %}selected{% endif %}>Pending</option>
+                    <option value="In Progress" {% if status_filter=='In Progress' %}selected{% endif %}>In Progress</option>
+                    <option value="Done" {% if status_filter=='Done' %}selected{% endif %}>Done</option>
+                </select>
+                <button type="submit">Filter</button>
+                <a class="link-button" href="{{ url_for('export_tasks', start_date=start_date, end_date=end_date, status_filter=status_filter) }}">Export</a>
+            </form>
+        </div>
+
+        <table class="plain-table">
+            <thead>
+                <tr>
+                    <th>Date</th><th>Title</th><th>Status</th><th>Priority</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for t in tasks %}
+                <tr>
+                    <td>{{ t.date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ t.title }}</td>
+                    <td>{{ t.status }}</td>
+                    <td>{{ t.priority }}</td>
+                    <td><a href="{{ url_for('delete_task', task_id=t.id) }}" onclick="return confirm('Delete this task?')">Delete</a></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5">No tasks yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
